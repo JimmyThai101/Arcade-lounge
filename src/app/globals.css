@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-lounge-black: #0a0a0a;
+  --color-lounge-charcoal: #141414;
+  --color-lounge-surface: #1c1c1c;
+  --color-lounge-border: #2a2a2a;
+  --color-lounge-red: #c41e3a;
+  --color-lounge-red-light: #e63950;
+  --color-lounge-gold: #d4af37;
+  --color-lounge-gold-light: #f0c75e;
+  --color-lounge-green: #2ecc71;
+  --color-lounge-green-dark: #27ae60;
+  --font-display: "Georgia", "Times New Roman", serif;
+  --font-body: system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-lounge-black);
+  color: #f5f5f5;
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.bg-lounge-gradient {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(196, 30, 58, 0.15), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(212, 175, 55, 0.08), transparent),
+    radial-gradient(ellipse 50% 30% at 10% 80%, rgba(46, 204, 113, 0.05), transparent),
+    var(--color-lounge-black);
+}
+
+.card-glow-red {
+  box-shadow: 0 0 20px rgba(196, 30, 58, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.card-glow-gold {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.card-glow-green {
+  box-shadow: 0 0 20px rgba(46, 204, 113, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes flipIn {
+  from { transform: rotateY(90deg); opacity: 0; }
+  to { transform: rotateY(0deg); opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
+}
+
+@keyframes roll {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(0.95); }
+  75% { transform: rotate(270deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes deal {
+  from { transform: translateY(-30px) scale(0.8); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-flip-in {
+  animation: flipIn 0.4s ease-out forwards;
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+.animate-roll {
+  animation: roll 0.6s ease-in-out;
+}
+
+.animate-deal {
+  animation: deal 0.35s ease-out forwards;
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 2s infinite;
+}
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.card-flip {
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+}
+
+.card-flip.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: inherit;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-lounge-charcoal);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-lounge-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-lounge-gold);
+}
