@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Game Lounge",
-  description: "Pick a game and play — a sleek arcade lounge with five fun mini-games.",
+  description: "Pick a game and play — a sleek arcade lounge with six fun mini-games.",
 };
 
 export default function RootLayout({

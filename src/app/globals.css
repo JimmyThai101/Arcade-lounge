@@ -93,6 +93,12 @@ body {
   to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
+@keyframes slotSpin {
+  0% { transform: translateY(-6px); filter: blur(1px); }
+  50% { transform: translateY(6px); filter: blur(2px); }
+  100% { transform: translateY(-6px); filter: blur(1px); }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
 }
@@ -117,6 +123,10 @@ body {
   animation: deal 0.35s ease-out forwards;
 }
 
+.animate-slot-spin {
+  animation: slotSpin 0.12s linear infinite;
+}
+
 .animate-pulse-gold {
   animation: pulse-gold 2s infinite;
 }
@@ -126,6 +136,7 @@ body {
 .stagger-3 { animation-delay: 0.15s; }
 .stagger-4 { animation-delay: 0.2s; }
 .stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
 
 .perspective-1000 {
   perspective: 1000px;

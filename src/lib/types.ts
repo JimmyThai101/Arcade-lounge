@@ -3,7 +3,8 @@ export type GameId =
   | "rock-paper-scissors"
   | "high-card"
   | "dice-duel"
-  | "memory-match";
+  | "memory-match"
+  | "slots";
 
 export interface GameInfo {
   id: GameId;

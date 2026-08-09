@@ -1,14 +1,15 @@
 # Game Lounge
 
-A sleek, casino-inspired mini-game arcade built with Next.js, React, TypeScript, and Tailwind CSS. Five fully playable games — no real money, no accounts, just fun.
+A sleek, casino-inspired mini-game arcade built with Next.js, React, TypeScript, and Tailwind CSS. Six fully playable games — no real money, no accounts, just fun.
 
 ## Games
 
-- **Make 21** — Draw cards and get as close to 21 as possible without going over
+- **Make 21** — Hit, stay, double down, or split pairs — get close to 21 without going over
 - **Rock Paper Scissors** — Classic showdown against the computer
 - **High Card** — Draw one card each, highest wins
 - **Dice Duel** — Roll two dice, highest total wins
 - **Memory Match** — Flip and match pairs in the fewest moves
+- **Slots** — Spin three reels and match symbols to win
 
 ## Getting Started
 

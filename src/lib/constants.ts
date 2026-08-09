@@ -4,7 +4,7 @@ export const GAMES: GameInfo[] = [
   {
     id: "make-21",
     name: "Make 21",
-    description: "Draw cards and get as close to 21 as you can without going over.",
+    description: "Hit, stay, double down, or split — get as close to 21 as you can without going over.",
     icon: "🃏",
     href: "/games/make-21",
     accent: "red",
@@ -41,6 +41,14 @@ export const GAMES: GameInfo[] = [
     href: "/games/memory-match",
     accent: "gold",
   },
+  {
+    id: "slots",
+    name: "Slots",
+    description: "Spin three reels and match symbols for a win — look for the lucky 7s.",
+    icon: "🎰",
+    href: "/games/slots",
+    accent: "green",
+  },
 ];
 
 export const DEFAULT_GAME_STATS: GameStats = {
@@ -58,6 +66,7 @@ export const DEFAULT_ALL_STATS: AllStats = {
     "high-card": { ...DEFAULT_GAME_STATS },
     "dice-duel": { ...DEFAULT_GAME_STATS },
     "memory-match": { ...DEFAULT_GAME_STATS, bestMoves: undefined, bestTime: undefined },
+    slots: { ...DEFAULT_GAME_STATS },
   },
 };
 

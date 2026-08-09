@@ -25,7 +25,7 @@ const accentStyles = {
   },
 };
 
-const staggerDelays = ["0.05s", "0.1s", "0.15s", "0.2s", "0.25s"];
+const staggerDelays = ["0.05s", "0.1s", "0.15s", "0.2s", "0.25s", "0.3s"];
 
 interface GameCardProps {
   game: GameInfo;
