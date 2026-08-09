@@ -8,6 +8,8 @@ import GameLayout from "@/components/shared/GameLayout";
 import GameButton from "@/components/shared/GameButton";
 import ScoreBoard from "@/components/shared/ScoreBoard";
 import ResultBanner from "@/components/shared/ResultBanner";
+import JimmycoinReward from "@/components/shared/JimmycoinReward";
+import { WIN_REWARDS } from "@/lib/jimmycoin";
 
 const CHOICES: { id: RPSChoice; icon: string; label: string }[] = [
   { id: "rock", icon: "✊", label: "Rock" },
@@ -117,7 +119,11 @@ export default function RockPaperScissorsGame() {
                   ? "You Lose"
                   : "It's a Tie!"
             }
-          />
+          >
+            {result === "win" && (
+              <JimmycoinReward amount={WIN_REWARDS["rock-paper-scissors"]} />
+            )}
+          </ResultBanner>
         )}
 
         {!result ? (

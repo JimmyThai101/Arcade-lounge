@@ -4,12 +4,16 @@ A sleek, casino-inspired mini-game arcade built with Next.js, React, TypeScript,
 
 ## Games
 
-- **Make 21** — Hit, stay, double down, or split pairs — get close to 21 without going over
+- **Make 21** — Wager Jimmycoin, then hit, stay, double down, or split — get close to 21 without going over
 - **Rock Paper Scissors** — Classic showdown against the computer
 - **High Card** — Draw one card each, highest wins
 - **Dice Duel** — Roll two dice, highest total wins
 - **Memory Match** — Flip and match pairs in the fewest moves
-- **Slots** — Spin three reels and match symbols to win
+- **Slots** — Spend Jimmycoin to spin for pairs, triples, and rare jackpots
+
+## Jimmycoin
+
+Fake arcade currency (icon: cowboy-hat dog). Free games award Jimmycoin on wins; Slots costs Jimmycoin to play and can pay out on matches. No real money.
 
 ## Getting Started
 

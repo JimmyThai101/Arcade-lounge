@@ -10,6 +10,8 @@ import GameButton from "@/components/shared/GameButton";
 import PlayingCardComponent from "@/components/shared/PlayingCard";
 import ScoreBoard from "@/components/shared/ScoreBoard";
 import ResultBanner from "@/components/shared/ResultBanner";
+import JimmycoinReward from "@/components/shared/JimmycoinReward";
+import { WIN_REWARDS } from "@/lib/jimmycoin";
 
 export default function HighCardGame() {
   const [playerCard, setPlayerCard] = useState<PlayingCard | null>(null);
@@ -107,7 +109,9 @@ export default function HighCardGame() {
                   ? `${computerCard?.display}${computerCard?.suit} beats your ${playerCard?.display}${playerCard?.suit}`
                   : `Both drew ${playerCard?.display}${playerCard?.suit} — Tie!`
             }
-          />
+          >
+            {result === "win" && <JimmycoinReward amount={WIN_REWARDS["high-card"]} />}
+          </ResultBanner>
         )}
 
         <div className="flex justify-center">

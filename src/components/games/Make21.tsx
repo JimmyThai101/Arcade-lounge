@@ -1,26 +1,38 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
 import type { PlayingCard } from "@/lib/types";
 import { createDeck, drawCard } from "@/lib/utils";
 import { recordGameResult } from "@/lib/stats";
 import { playDraw, playWin, playLose, playTie } from "@/lib/sounds";
+import {
+  JIMMYCOIN_EVENT,
+  addJimmycoin,
+  canAfford,
+  getJimmycoin,
+  spendJimmycoin,
+} from "@/lib/jimmycoin";
 import GameLayout from "@/components/shared/GameLayout";
 import GameButton from "@/components/shared/GameButton";
 import PlayingCardComponent from "@/components/shared/PlayingCard";
 import ScoreBoard from "@/components/shared/ScoreBoard";
 import ResultBanner from "@/components/shared/ResultBanner";
+import JimmycoinReward from "@/components/shared/JimmycoinReward";
 
-type Phase = "idle" | "playing" | "finished";
+type Phase = "betting" | "playing" | "finished";
 type HandOutcome = "win" | "loss" | "tie" | "bust";
 
 interface PlayerHand {
   cards: PlayingCard[];
+  bet: number;
   stood: boolean;
   busted: boolean;
   doubled: boolean;
   outcome: HandOutcome | null;
 }
+
+const QUICK_BETS = [1, 5, 10, 25, 50] as const;
 
 function handTotal(hand: PlayingCard[]): number {
   let total = hand.reduce((sum, c) => sum + c.value, 0);
@@ -40,8 +52,8 @@ function isPair(hand: PlayingCard[]): boolean {
   return hand.length === 2 && hand[0].display === hand[1].display;
 }
 
-function emptyHand(): PlayerHand {
-  return { cards: [], stood: false, busted: false, doubled: false, outcome: null };
+function emptyHand(bet = 0): PlayerHand {
+  return { cards: [], bet, stood: false, busted: false, doubled: false, outcome: null };
 }
 
 function compareHand(pTotal: number, cTotal: number, busted: boolean): HandOutcome {
@@ -53,7 +65,7 @@ function compareHand(pTotal: number, cTotal: number, busted: boolean): HandOutco
 }
 
 export default function Make21Game() {
-  const [phase, setPhase] = useState<Phase>("idle");
+  const [phase, setPhase] = useState<Phase>("betting");
   const [deck, setDeck] = useState<PlayingCard[]>([]);
   const [hands, setHands] = useState<PlayerHand[]>([emptyHand()]);
   const [activeHand, setActiveHand] = useState(0);
@@ -63,8 +75,33 @@ export default function Make21Game() {
   const [losses, setLosses] = useState(0);
   const [ties, setTies] = useState(0);
   const [message, setMessage] = useState("");
+  const [coinDelta, setCoinDelta] = useState(0);
+  const [balance, setBalance] = useState(0);
+  const [wagerInput, setWagerInput] = useState("5");
+  const [tableBet, setTableBet] = useState(0);
+
+  useEffect(() => {
+    setBalance(getJimmycoin());
+    const onChange = (event: Event) => {
+      const custom = event as CustomEvent<number>;
+      if (typeof custom.detail === "number") setBalance(custom.detail);
+      else setBalance(getJimmycoin());
+    };
+    window.addEventListener(JIMMYCOIN_EVENT, onChange);
+    return () => window.removeEventListener(JIMMYCOIN_EVENT, onChange);
+  }, []);
+
+  const parsedWager = Number.parseInt(wagerInput, 10);
+  const wager =
+    Number.isFinite(parsedWager) && parsedWager > 0 ? Math.floor(parsedWager) : 0;
+  const canDeal = wager >= 1 && canAfford(wager);
 
   const startGame = useCallback(() => {
+    const amount = Number.parseInt(wagerInput, 10);
+    if (!Number.isFinite(amount) || amount < 1) return;
+    const bet = Math.floor(amount);
+    if (!spendJimmycoin(bet)) return;
+
     let newDeck = createDeck();
     const pCards: PlayingCard[] = [];
     const cCards: PlayingCard[] = [];
@@ -80,13 +117,17 @@ export default function Make21Game() {
     cCards.push(card);
 
     setDeck(newDeck);
-    setHands([{ cards: pCards, stood: false, busted: false, doubled: false, outcome: null }]);
+    setHands([
+      { cards: pCards, bet, stood: false, busted: false, doubled: false, outcome: null },
+    ]);
     setActiveHand(0);
     setComputerHand(cCards);
+    setTableBet(bet);
     setPhase("playing");
     setResult(null);
     setMessage("");
-  }, []);
+    setCoinDelta(0);
+  }, [wagerInput]);
 
   const finishRound = useCallback((finalHands: PlayerHand[], cHand: PlayingCard[]) => {
     const cTotal = handTotal(cHand);
@@ -98,13 +139,18 @@ export default function Make21Game() {
     let winDelta = 0;
     let lossDelta = 0;
     let tieDelta = 0;
+    let returned = 0;
+    let totalWagered = 0;
 
     resolved.forEach((hand) => {
+      totalWagered += hand.bet;
       if (hand.outcome === "win") {
         winDelta += 1;
+        returned += hand.bet * 2;
         recordGameResult("make-21", "win");
       } else if (hand.outcome === "tie") {
         tieDelta += 1;
+        returned += hand.bet;
         recordGameResult("make-21", "tie");
       } else {
         lossDelta += 1;
@@ -112,9 +158,12 @@ export default function Make21Game() {
       }
     });
 
+    if (returned > 0) addJimmycoin(returned);
+
     if (winDelta) setWins((w) => w + winDelta);
     if (lossDelta) setLosses((l) => l + lossDelta);
     if (tieDelta) setTies((t) => t + tieDelta);
+    setCoinDelta(returned - totalWagered);
 
     let banner: HandOutcome;
     if (winDelta > lossDelta) banner = "win";
@@ -223,6 +272,7 @@ export default function Make21Game() {
     if (phase !== "playing" || deck.length === 0) return;
     const hand = hands[activeHand];
     if (hand.cards.length !== 2 || hand.doubled) return;
+    if (!spendJimmycoin(hand.bet)) return;
 
     playDraw();
     const [card, newDeck] = drawCard(deck);
@@ -230,7 +280,14 @@ export default function Make21Game() {
     const busted = handTotal(nextCards) > 21;
     const nextHands = hands.map((h, i) =>
       i === activeHand
-        ? { ...h, cards: nextCards, doubled: true, stood: !busted, busted }
+        ? {
+            ...h,
+            cards: nextCards,
+            bet: h.bet * 2,
+            doubled: true,
+            stood: !busted,
+            busted,
+          }
         : h
     );
     advanceOrFinish(nextHands, newDeck, activeHand);
@@ -240,14 +297,29 @@ export default function Make21Game() {
     if (phase !== "playing" || deck.length < 2) return;
     const hand = hands[activeHand];
     if (hands.length !== 1 || !isPair(hand.cards)) return;
+    if (!spendJimmycoin(hand.bet)) return;
 
     playDraw();
     const [card1, afterFirst] = drawCard(deck);
     const [card2, afterSecond] = drawCard(afterFirst);
 
     const splitHands: PlayerHand[] = [
-      { cards: [hand.cards[0], card1], stood: false, busted: false, doubled: false, outcome: null },
-      { cards: [hand.cards[1], card2], stood: false, busted: false, doubled: false, outcome: null },
+      {
+        cards: [hand.cards[0], card1],
+        bet: hand.bet,
+        stood: false,
+        busted: false,
+        doubled: false,
+        outcome: null,
+      },
+      {
+        cards: [hand.cards[1], card2],
+        bet: hand.bet,
+        stood: false,
+        busted: false,
+        doubled: false,
+        outcome: null,
+      },
     ];
 
     setDeck(afterSecond);
@@ -255,31 +327,120 @@ export default function Make21Game() {
     setActiveHand(0);
   };
 
+  const goToBetting = () => {
+    setPhase("betting");
+    setResult(null);
+    setMessage("");
+    setCoinDelta(0);
+    setHands([emptyHand()]);
+    setComputerHand([]);
+  };
+
   const current = hands[activeHand];
   const canAct = phase === "playing" && current && !current.stood && !current.busted;
-  const canDouble = canAct && current.cards.length === 2 && !current.doubled;
-  const canSplit = canAct && hands.length === 1 && isPair(current.cards) && deck.length >= 2;
+  const canDouble =
+    canAct && current.cards.length === 2 && !current.doubled && canAfford(current.bet);
+  const canSplit =
+    canAct &&
+    hands.length === 1 &&
+    isPair(current.cards) &&
+    deck.length >= 2 &&
+    canAfford(current.bet);
   const showComputerTotal = phase === "finished";
   const computerTotal = handTotal(computerHand);
+  const totalAtRisk = hands.reduce((sum, h) => sum + h.bet, 0);
 
   return (
     <GameLayout
       title="Make 21"
-      subtitle="Hit, stay, double down, or split pairs — get close to 21 without going over."
+      subtitle="Wager Jimmycoin, then hit, stay, double down, or split — get close to 21 without going over."
     >
       <div className="space-y-6">
         <ScoreBoard label="Session Score" wins={wins} losses={losses} ties={ties} />
 
-        {phase === "idle" && (
-          <div className="flex justify-center py-12">
-            <GameButton onClick={startGame} variant="gold">
-              Deal Cards
-            </GameButton>
+        {phase === "betting" && (
+          <div className="mx-auto max-w-md space-y-5 rounded-2xl border border-lounge-border bg-lounge-surface/70 p-6">
+            <div className="text-center">
+              <p className="text-xs uppercase tracking-[0.2em] text-lounge-gold">Place Your Bet</p>
+              <p className="mt-2 text-sm text-gray-400">
+                Wager any amount you can afford. Wins pay even money.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-3">
+              <Image
+                src="/jimmycoin.png"
+                alt=""
+                width={36}
+                height={36}
+                className="rounded-full object-cover ring-1 ring-lounge-gold/50"
+              />
+              <input
+                type="number"
+                min={1}
+                max={balance || undefined}
+                step={1}
+                value={wagerInput}
+                onChange={(e) => setWagerInput(e.target.value)}
+                className="w-36 rounded-lg border border-lounge-gold/40 bg-lounge-black/60 px-3 py-2 text-center text-2xl font-bold tabular-nums text-lounge-gold-light outline-none focus:border-lounge-gold"
+                aria-label="Jimmycoin wager"
+              />
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-2">
+              {QUICK_BETS.map((amount) => (
+                <button
+                  key={amount}
+                  type="button"
+                  disabled={balance < amount}
+                  onClick={() => setWagerInput(String(amount))}
+                  className="rounded-lg border border-lounge-border bg-lounge-charcoal/60 px-3 py-1.5 text-xs font-semibold text-gray-300 transition hover:border-lounge-gold/50 hover:text-lounge-gold disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  {amount}
+                </button>
+              ))}
+              <button
+                type="button"
+                disabled={balance < 1}
+                onClick={() => setWagerInput(String(balance))}
+                className="rounded-lg border border-lounge-gold/40 bg-lounge-gold/10 px-3 py-1.5 text-xs font-semibold text-lounge-gold transition hover:bg-lounge-gold/20 disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                Max
+              </button>
+            </div>
+
+            <p className="text-center text-xs text-gray-500">
+              Balance: {balance} JC
+              {wager > balance && wager > 0 ? " · Not enough Jimmycoin" : ""}
+              {balance < 1 ? " · Win free games or slots to earn Jimmycoin" : ""}
+            </p>
+
+            <div className="flex justify-center">
+              <GameButton onClick={startGame} variant="gold" disabled={!canDeal}>
+                {balance < 1 ? "Need Jimmycoin" : `Deal Cards (−${wager || 0} JC)`}
+              </GameButton>
+            </div>
           </div>
         )}
 
-        {phase !== "idle" && (
+        {phase !== "betting" && (
           <>
+            <div className="mx-auto flex max-w-sm items-center justify-between rounded-xl border border-lounge-border bg-lounge-charcoal/50 px-4 py-3 text-sm">
+              <span className="inline-flex items-center gap-2 text-gray-400">
+                <Image
+                  src="/jimmycoin.png"
+                  alt=""
+                  width={22}
+                  height={22}
+                  className="rounded-full object-cover ring-1 ring-lounge-gold/40"
+                />
+                {phase === "playing" ? "At risk" : "Wagered"}
+              </span>
+              <span className="font-semibold text-lounge-gold-light">
+                {totalAtRisk || tableBet} JC
+              </span>
+            </div>
+
             <div className="space-y-2">
               <p className="text-xs uppercase tracking-widest text-gray-500">
                 Computer {showComputerTotal && `· ${computerTotal}`}
@@ -316,6 +477,8 @@ export default function Make21Game() {
                       {hands.length > 1 ? `Hand ${handIndex + 1}` : "Your Hand"}
                       {" · "}
                       {total}
+                      {" · "}
+                      {hand.bet} JC
                       {hand.doubled && " · Doubled"}
                       {hand.busted && " · Bust"}
                       {hand.outcome === "win" && " · Win"}
@@ -343,18 +506,40 @@ export default function Make21Game() {
                 </GameButton>
                 <GameButton onClick={handleDoubleDown} variant="gold" disabled={!canDouble}>
                   Double Down
+                  {current ? ` (−${current.bet})` : ""}
                 </GameButton>
                 <GameButton onClick={handleSplit} variant="gold" disabled={!canSplit}>
                   Split
+                  {current ? ` (−${current.bet})` : ""}
                 </GameButton>
               </div>
             )}
 
             {phase === "finished" && (
               <div className="space-y-4">
-                <ResultBanner result={result} message={message} />
+                <ResultBanner result={result} message={message}>
+                  {coinDelta > 0 && <JimmycoinReward amount={coinDelta} />}
+                  {coinDelta === 0 && result === "tie" && (
+                    <span className="text-sm text-gray-400">Push — wager returned</span>
+                  )}
+                  {coinDelta === 0 && result !== "tie" && (
+                    <span className="text-sm text-gray-400">Broke even</span>
+                  )}
+                  {coinDelta < 0 && (
+                    <span className="inline-flex items-center gap-1.5 text-sm text-lounge-red-light">
+                      <Image
+                        src="/jimmycoin.png"
+                        alt=""
+                        width={18}
+                        height={18}
+                        className="rounded-full object-cover opacity-80"
+                      />
+                      {coinDelta} Jimmycoin
+                    </span>
+                  )}
+                </ResultBanner>
                 <div className="flex justify-center">
-                  <GameButton onClick={startGame} variant="gold">
+                  <GameButton onClick={goToBetting} variant="gold">
                     Play Again
                   </GameButton>
                 </div>

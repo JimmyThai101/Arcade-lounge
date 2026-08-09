@@ -4,7 +4,7 @@ export const GAMES: GameInfo[] = [
   {
     id: "make-21",
     name: "Make 21",
-    description: "Hit, stay, double down, or split — get as close to 21 as you can without going over.",
+    description: "Wager Jimmycoin, then hit, stay, double down, or split — get close to 21 without going over.",
     icon: "🃏",
     href: "/games/make-21",
     accent: "red",
@@ -44,7 +44,7 @@ export const GAMES: GameInfo[] = [
   {
     id: "slots",
     name: "Slots",
-    description: "Spin three reels and match symbols for a win — look for the lucky 7s.",
+    description: "Spend Jimmycoin to spin — pairs, triples, and rare 7s pay out.",
     icon: "🎰",
     href: "/games/slots",
     accent: "green",

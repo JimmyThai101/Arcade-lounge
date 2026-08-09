@@ -8,6 +8,8 @@ import { formatTime, shuffle } from "@/lib/utils";
 import GameLayout from "@/components/shared/GameLayout";
 import GameButton from "@/components/shared/GameButton";
 import ResultBanner from "@/components/shared/ResultBanner";
+import JimmycoinReward from "@/components/shared/JimmycoinReward";
+import { WIN_REWARDS } from "@/lib/jimmycoin";
 
 interface MemoryCard {
   id: number;
@@ -164,7 +166,9 @@ export default function MemoryMatchGame() {
             <ResultBanner
               result="win"
               message={`Completed in ${moves} moves · ${formatTime(seconds)}`}
-            />
+            >
+              <JimmycoinReward amount={WIN_REWARDS["memory-match"]} />
+            </ResultBanner>
             <div className="flex justify-center">
               <GameButton onClick={startGame} variant="gold">
                 Play Again

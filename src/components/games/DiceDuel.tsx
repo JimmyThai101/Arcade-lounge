@@ -8,6 +8,8 @@ import GameLayout from "@/components/shared/GameLayout";
 import GameButton from "@/components/shared/GameButton";
 import ScoreBoard from "@/components/shared/ScoreBoard";
 import ResultBanner from "@/components/shared/ResultBanner";
+import JimmycoinReward from "@/components/shared/JimmycoinReward";
+import { WIN_REWARDS } from "@/lib/jimmycoin";
 
 function DiceFace({ value, rolling }: { value: number; rolling: boolean }) {
   const dots: Record<number, number[][]> = {
@@ -139,7 +141,9 @@ export default function DiceDuelGame() {
                   ? `${computerDice[0] + computerDice[1]} beats ${playerDice[0] + playerDice[1]}`
                   : `Both rolled ${playerDice[0] + playerDice[1]} — Tie!`
             }
-          />
+          >
+            {result === "win" && <JimmycoinReward amount={WIN_REWARDS["dice-duel"]} />}
+          </ResultBanner>
         )}
 
         <div className="flex justify-center">

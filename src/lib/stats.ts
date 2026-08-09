@@ -1,5 +1,6 @@
 import type { AllStats, GameId, GameStats } from "./types";
 import { DEFAULT_ALL_STATS, STORAGE_KEY } from "./constants";
+import { addJimmycoin, WIN_REWARDS } from "./jimmycoin";
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -42,6 +43,11 @@ export function recordGameResult(
   stats.totalGamesPlayed += 1;
   stats.games[gameId] = game;
   saveStats(stats);
+
+  if (result === "win" && gameId in WIN_REWARDS) {
+    addJimmycoin(WIN_REWARDS[gameId as keyof typeof WIN_REWARDS]);
+  }
+
   return game;
 }
 
@@ -59,6 +65,7 @@ export function recordMemoryBest(moves: number, timeSeconds: number): void {
   stats.totalGamesPlayed += 1;
   stats.games["memory-match"] = game;
   saveStats(stats);
+  addJimmycoin(WIN_REWARDS["memory-match"]);
 }
 
 export function incrementGamesPlayed(gameId: GameId): void {
