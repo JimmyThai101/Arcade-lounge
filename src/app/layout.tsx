@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Providers from "@/components/auth/Providers";
+import TopControls from "@/components/shared/TopControls";
 
 export const metadata: Metadata = {
   title: "Game Lounge",
@@ -14,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        {children}
+        <Providers>
+          <TopControls />
+          {children}
+        </Providers>
       </body>
     </html>
   );

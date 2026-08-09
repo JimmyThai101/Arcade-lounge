@@ -1,13 +1,12 @@
 import { GAMES } from "@/lib/constants";
 import GameCard from "@/components/hub/GameCard";
 import StatsPanel from "@/components/hub/StatsPanel";
-import MuteButton from "@/components/shared/MuteButton";
+import Leaderboard from "@/components/hub/Leaderboard";
 import JimmycoinBadge from "@/components/shared/JimmycoinBadge";
 
 export default function HomePage() {
   return (
     <div className="bg-lounge-gradient min-h-screen">
-      <MuteButton />
       <div className="fixed top-4 left-4 z-50">
         <JimmycoinBadge />
       </div>
@@ -23,6 +22,9 @@ export default function HomePage() {
           <p className="mt-3 text-lg text-gray-400">
             Win free games to earn Jimmycoin — spend them on Slots.
           </p>
+          <p className="mt-2 text-sm text-gray-500">
+            Sign in with Google to claim a username and flex on the global leaderboard.
+          </p>
           <div className="mx-auto mt-6 h-px w-32 bg-gradient-to-r from-transparent via-lounge-gold/50 to-transparent" />
         </header>
 
@@ -32,10 +34,11 @@ export default function HomePage() {
           ))}
         </div>
 
+        <Leaderboard />
         <StatsPanel />
 
         <footer className="mt-12 text-center text-xs text-gray-600">
-          For fun only — Jimmycoin is fake currency. No real money, no accounts, no gambling.
+          For fun only — Jimmycoin is fake currency. No real money, no gambling.
         </footer>
       </div>
     </div>

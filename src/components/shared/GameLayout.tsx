@@ -2,7 +2,6 @@
 
 import { ReactNode } from "react";
 import BackToHub from "./BackToHub";
-import MuteButton from "./MuteButton";
 import JimmycoinBadge from "./JimmycoinBadge";
 
 interface GameLayoutProps {
@@ -14,7 +13,6 @@ interface GameLayoutProps {
 export default function GameLayout({ title, subtitle, children }: GameLayoutProps) {
   return (
     <div className="bg-lounge-gradient min-h-screen">
-      <MuteButton />
       <div className="fixed top-4 left-4 z-50">
         <JimmycoinBadge size="sm" />
       </div>

@@ -6,6 +6,18 @@ function isBrowser(): boolean {
   return typeof window !== "undefined";
 }
 
+/** Push a result to the global leaderboard when the player is signed in. */
+function syncLeaderboardResult(result: "win" | "loss" | "tie"): void {
+  if (!isBrowser()) return;
+  void fetch("/api/stats/record", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ result }),
+  }).catch(() => {
+    /* guest / offline / username not set — ignore */
+  });
+}
+
 export function loadStats(): AllStats {
   if (!isBrowser()) return DEFAULT_ALL_STATS;
   try {
@@ -48,6 +60,7 @@ export function recordGameResult(
     addJimmycoin(WIN_REWARDS[gameId as keyof typeof WIN_REWARDS]);
   }
 
+  syncLeaderboardResult(result);
   return game;
 }
 
@@ -66,6 +79,7 @@ export function recordMemoryBest(moves: number, timeSeconds: number): void {
   stats.games["memory-match"] = game;
   saveStats(stats);
   addJimmycoin(WIN_REWARDS["memory-match"]);
+  syncLeaderboardResult("win");
 }
 
 export function incrementGamesPlayed(gameId: GameId): void {
