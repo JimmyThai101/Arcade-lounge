@@ -80,3 +80,12 @@ export function playMatch(): void {
 export function playDraw(): void {
   playTone(500, 0.08, "triangle", 0.1);
 }
+
+/** Bigger fanfare for slots triple-7 jackpot only */
+export function playJackpot(): void {
+  const notes = [523, 659, 784, 1046, 784, 1046];
+  notes.forEach((freq, i) => {
+    setTimeout(() => playTone(freq, 0.22, "sine", 0.14), i * 90);
+  });
+  setTimeout(() => playTone(1318, 0.45, "triangle", 0.12), 580);
+}

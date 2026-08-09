@@ -131,6 +131,54 @@ body {
   animation: pulse-gold 2s infinite;
 }
 
+@keyframes jackpotBurst {
+  0% { transform: scale(0.6); opacity: 0; }
+  20% { transform: scale(1.08); opacity: 1; }
+  70% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.02); opacity: 0; }
+}
+
+@keyframes jackpotFlash {
+  0%, 100% { opacity: 0; }
+  15% { opacity: 0.55; }
+  40% { opacity: 0.15; }
+  60% { opacity: 0.4; }
+  85% { opacity: 0.1; }
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translate3d(0, -20vh, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift, 0px), 110vh, 0) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes jackpotReelGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.2); }
+  50% { box-shadow: 0 0 28px 4px rgba(212, 175, 55, 0.55); }
+}
+
+.animate-jackpot-burst {
+  animation: jackpotBurst 2.8s ease-out forwards;
+}
+
+.animate-jackpot-flash {
+  animation: jackpotFlash 2.8s ease-out forwards;
+}
+
+.animate-confetti {
+  animation: confettiFall var(--fall-duration, 2.4s) ease-in forwards;
+  animation-delay: var(--fall-delay, 0s);
+}
+
+.animate-jackpot-reel {
+  animation: jackpotReelGlow 0.7s ease-in-out 4;
+}
+
 .stagger-1 { animation-delay: 0.05s; }
 .stagger-2 { animation-delay: 0.1s; }
 .stagger-3 { animation-delay: 0.15s; }
