@@ -49,6 +49,14 @@ export const GAMES: GameInfo[] = [
     href: "/games/slots",
     accent: "green",
   },
+  {
+    id: "neon-dash",
+    name: "Neon Dash",
+    description: "Geometry-style endless run — jump spikes and blocks. Free play, no Jimmycoin.",
+    icon: "🟩",
+    href: "/games/neon-dash",
+    accent: "purple",
+  },
 ];
 
 export const DEFAULT_GAME_STATS: GameStats = {
@@ -67,6 +75,7 @@ export const DEFAULT_ALL_STATS: AllStats = {
     "dice-duel": { ...DEFAULT_GAME_STATS },
     "memory-match": { ...DEFAULT_GAME_STATS, bestMoves: undefined, bestTime: undefined },
     slots: { ...DEFAULT_GAME_STATS },
+    "neon-dash": { ...DEFAULT_GAME_STATS, bestTime: undefined },
   },
 };
 

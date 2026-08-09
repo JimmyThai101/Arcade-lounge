@@ -2,6 +2,7 @@ import { GAMES } from "@/lib/constants";
 import GameCard from "@/components/hub/GameCard";
 import StatsPanel from "@/components/hub/StatsPanel";
 import Leaderboard from "@/components/hub/Leaderboard";
+import DashLeaderboard from "@/components/hub/DashLeaderboard";
 import JimmycoinBadge from "@/components/shared/JimmycoinBadge";
 
 export default function HomePage() {
@@ -35,6 +36,7 @@ export default function HomePage() {
         </div>
 
         <Leaderboard />
+        <DashLeaderboard />
         <StatsPanel />
 
         <footer className="mt-12 text-center text-xs text-gray-600">

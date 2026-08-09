@@ -4,7 +4,8 @@ export type GameId =
   | "high-card"
   | "dice-duel"
   | "memory-match"
-  | "slots";
+  | "slots"
+  | "neon-dash";
 
 export interface GameInfo {
   id: GameId;
@@ -12,7 +13,7 @@ export interface GameInfo {
   description: string;
   icon: string;
   href: string;
-  accent: "red" | "gold" | "green";
+  accent: "red" | "gold" | "green" | "purple";
 }
 
 export interface GameStats {

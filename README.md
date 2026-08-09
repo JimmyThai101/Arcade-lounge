@@ -1,6 +1,6 @@
 # Game Lounge
 
-A sleek, casino-inspired mini-game arcade built with Next.js, React, TypeScript, and Tailwind CSS. Six fully playable games — no real money, just fun.
+A sleek, casino-inspired mini-game arcade built with Next.js, React, TypeScript, and Tailwind CSS. Seven fully playable games — no real money, just fun.
 
 ## Games
 
@@ -10,6 +10,7 @@ A sleek, casino-inspired mini-game arcade built with Next.js, React, TypeScript,
 - **Dice Duel** — Roll two dice, highest total wins
 - **Memory Match** — Flip and match pairs in the fewest moves
 - **Slots** — Spend Jimmycoin to spin for pairs, triples, and rare jackpots
+- **Neon Dash** — Geometry Dash–style endless runner (Chrome dino vibes). Free — no Jimmycoin. Separate survival-time leaderboard.
 
 ## Jimmycoin
 

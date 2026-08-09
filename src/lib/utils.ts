@@ -48,3 +48,14 @@ export function formatTime(seconds: number): string {
   const s = seconds % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
+
+/** Survival clock for Neon Dash (e.g. 12.34s or 1:05.20) */
+export function formatDashTime(seconds: number): string {
+  const safe = Math.max(0, seconds);
+  const m = Math.floor(safe / 60);
+  const s = safe - m * 60;
+  if (m > 0) {
+    return `${m}:${s.toFixed(2).padStart(5, "0")}`;
+  }
+  return `${s.toFixed(2)}s`;
+}

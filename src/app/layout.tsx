@@ -5,7 +5,7 @@ import TopControls from "@/components/shared/TopControls";
 
 export const metadata: Metadata = {
   title: "Game Lounge",
-  description: "Pick a game and play — a sleek arcade lounge with six fun mini-games.",
+  description: "Pick a game and play — a sleek arcade lounge with seven fun mini-games.",
 };
 
 export default function RootLayout({

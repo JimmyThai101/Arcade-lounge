@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { loadStats } from "@/lib/stats";
 import { GAMES } from "@/lib/constants";
 import type { AllStats } from "@/lib/types";
-import { formatTime } from "@/lib/utils";
+import { formatDashTime, formatTime } from "@/lib/utils";
 
 export default function StatsPanel() {
   const [stats, setStats] = useState<AllStats | null>(null);
@@ -60,6 +60,9 @@ export default function StatsPanel() {
                         Best: {gs.bestMoves} moves
                         {gs.bestTime !== undefined && ` · ${formatTime(gs.bestTime)}`}
                       </span>
+                    )}
+                    {game.id === "neon-dash" && gs.bestTime !== undefined && (
+                      <span>Best survival: {formatDashTime(gs.bestTime)}</span>
                     )}
                   </div>
                 </div>

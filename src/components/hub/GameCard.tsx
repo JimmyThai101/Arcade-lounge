@@ -23,9 +23,15 @@ const accentStyles = {
     badge: "text-lounge-green",
     button: "bg-lounge-green/20 text-lounge-green group-hover:bg-lounge-green group-hover:text-black",
   },
+  purple: {
+    border: "border-violet-400/30 hover:border-violet-400/60",
+    glow: "card-glow-purple",
+    badge: "text-violet-300",
+    button: "bg-violet-500/20 text-violet-200 group-hover:bg-violet-500 group-hover:text-white",
+  },
 };
 
-const staggerDelays = ["0.05s", "0.1s", "0.15s", "0.2s", "0.25s", "0.3s"];
+const staggerDelays = ["0.05s", "0.1s", "0.15s", "0.2s", "0.25s", "0.3s", "0.35s"];
 
 interface GameCardProps {
   game: GameInfo;

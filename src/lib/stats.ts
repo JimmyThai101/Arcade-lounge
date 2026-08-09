@@ -88,3 +88,29 @@ export function incrementGamesPlayed(gameId: GameId): void {
   stats.totalGamesPlayed += 1;
   saveStats(stats);
 }
+
+/** Neon Dash: track local best survival time (higher is better). No Jimmycoin. */
+export function recordDashRun(timeSeconds: number): number {
+  const stats = loadStats();
+  const game = { ...(stats.games["neon-dash"] ?? { ...DEFAULT_ALL_STATS.games["neon-dash"] }) };
+  game.gamesPlayed += 1;
+  const rounded = Math.round(timeSeconds * 100) / 100;
+  if (game.bestTime === undefined || rounded > game.bestTime) {
+    game.bestTime = rounded;
+  }
+  stats.totalGamesPlayed += 1;
+  stats.games["neon-dash"] = game;
+  saveStats(stats);
+
+  if (isBrowser()) {
+    void fetch("/api/dash/score", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ time: rounded }),
+    }).catch(() => {
+      /* guest / offline */
+    });
+  }
+
+  return game.bestTime ?? rounded;
+}
